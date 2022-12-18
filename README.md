@@ -14,6 +14,15 @@ npm install
 Step 4:
 npx mix
 
+Navigation:
+=================
+	- app url: http://localhost:8080
+	- phpmyadmin url: http//localhost:3306
+
+DB Credentials:
+================
+	- username: yii2advanced
+	- password: secret
 
 Query Optimisation:
 =============================================================================================================
