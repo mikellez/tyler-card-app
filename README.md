@@ -14,24 +14,24 @@ npm install
 Step 4:
 npx mix
 
-=======================================================================================================================================================
 
 Query Optimisation:
+=============================================================================================================
 
 1. There is two ways of optimizing LIKE statement
-  a. full-text-search: which is not 100% accurate but improves searches because of the use of indexing
-  b. UNION: separate tables into using UNION
+	- full-text-search: which is not 100% accurate but improves searches because of the use of indexing
+	- UNION: separate tables into using UNION
 2. Indexing relevant primary key, foreign key, and keys that is use for searching
 3. Avoid using IS NULL/ IS NOT NULL as a condition/filter. Eg. Personalities.deleted IS NULL is changed to Personalities.status = 1
 
 
 
 Example 1: BY UNION
-=======================================================================================================================================================
+============================================================================================================
 
 -- START --
 
-SELECT 
+	SELECT 
 	`Jobs__id`,
 	`Jobs__name`,
 	`Jobs__media_id`,
@@ -79,7 +79,7 @@ SELECT
 	GROUP_CONCAT(`JobTypes__created`) AS `JobTypes__created`,
 	GROUP_CONCAT(`JobTypes__modified`) AS `JobTypes__modified`,
 	GROUP_CONCAT(`JobTypes__deleted`) AS `JobTypes__deleted`
-FROM 
+	FROM 
 	(
 		SELECT 
 			Jobs.id AS `Jobs__id`,
@@ -613,9 +613,9 @@ FROM
 			AND Jobs.status = 1)
 	) AS t
 
-GROUP BY t.Jobs__id
-ORDER BY t.Jobs__sort_order desc, t.Jobs__id DESC 
-LIMIT 50 OFFSET 0
+	GROUP BY t.Jobs__id
+	ORDER BY t.Jobs__sort_order desc, t.Jobs__id DESC 
+	LIMIT 50 OFFSET 0
 
 -- END --
 
@@ -624,7 +624,7 @@ Example 2: Full-Text-Search
 
 -- START --
 
-SELECT 
+	SELECT 
 	Jobs.id AS `Jobs__id`,
 	Jobs.name AS `Jobs__name`,
 	Jobs.media_id AS `Jobs__media_id`,
@@ -672,24 +672,24 @@ SELECT
 	JobTypes.created AS `JobTypes__created`,
 	JobTypes.modified AS `JobTypes__modified`,
 	JobTypes.deleted AS `JobTypes__deleted`
-FROM jobs Jobs
-LEFT JOIN jobs_personalities JobsPersonalities ON Jobs.id = (JobsPersonalities.job_id)
-LEFT JOIN personalities Personalities ON (Personalities.id = (JobsPersonalities.personality_id) AND (Personalities.status = 1)) 
-LEFT JOIN jobs_practical_skills JobsPracticalSkills ON Jobs.id = (JobsPracticalSkills.job_id)
-LEFT JOIN practical_skills PracticalSkills ON (PracticalSkills.id = (JobsPracticalSkills.practical_skill_id) AND (PracticalSkills.status = 1))
-LEFT JOIN jobs_basic_abilities JobsBasicAbilities ON Jobs.id = (JobsBasicAbilities.job_id)
-LEFT JOIN basic_abilities BasicAbilities ON (BasicAbilities.id = (JobsBasicAbilities.basic_ability_id) AND (BasicAbilities.status = 1))
-LEFT JOIN jobs_tools JobsTools ON Jobs.id = (JobsTools.job_id)
-LEFT JOIN affiliates Tools ON (Tools.type = 1 AND Tools.id = (JobsTools.affiliate_id) AND (Tools.status = 1))
-LEFT JOIN jobs_career_paths JobsCareerPaths ON Jobs.id = (JobsCareerPaths.job_id)
-LEFT JOIN affiliates CareerPaths ON (CareerPaths.type = 3 AND CareerPaths.id = (JobsCareerPaths.affiliate_id) AND (CareerPaths.status = 1))
-LEFT JOIN jobs_rec_qualifications JobsRecQualifications ON Jobs.id = (JobsRecQualifications.job_id)
-LEFT JOIN affiliates RecQualifications ON (RecQualifications.type = 2 AND RecQualifications.id = (JobsRecQualifications.affiliate_id) AND (RecQualifications.status = 1))
-LEFT JOIN jobs_req_qualifications JobsReqQualifications ON Jobs.id = (JobsReqQualifications.job_id)
-LEFT JOIN affiliates ReqQualifications ON (ReqQualifications.type = 2 AND ReqQualifications.id = (JobsReqQualifications.affiliate_id) AND (ReqQualifications.status = 1))
-INNER JOIN job_categories JobCategories ON (JobCategories.id = (Jobs.job_category_id) AND (JobCategories.status = 1))
-INNER JOIN job_types JobTypes ON (JobTypes.id = (Jobs.job_type_id) AND (JobTypes.status = 1))
-WHERE (
+	FROM jobs Jobs
+	LEFT JOIN jobs_personalities JobsPersonalities ON Jobs.id = (JobsPersonalities.job_id)
+	LEFT JOIN personalities Personalities ON (Personalities.id = (JobsPersonalities.personality_id) AND (Personalities.status = 1)) 
+	LEFT JOIN jobs_practical_skills JobsPracticalSkills ON Jobs.id = (JobsPracticalSkills.job_id)
+	LEFT JOIN practical_skills PracticalSkills ON (PracticalSkills.id = (JobsPracticalSkills.practical_skill_id) AND (PracticalSkills.status = 1))
+	LEFT JOIN jobs_basic_abilities JobsBasicAbilities ON Jobs.id = (JobsBasicAbilities.job_id)
+	LEFT JOIN basic_abilities BasicAbilities ON (BasicAbilities.id = (JobsBasicAbilities.basic_ability_id) AND (BasicAbilities.status = 1))
+	LEFT JOIN jobs_tools JobsTools ON Jobs.id = (JobsTools.job_id)
+	LEFT JOIN affiliates Tools ON (Tools.type = 1 AND Tools.id = (JobsTools.affiliate_id) AND (Tools.status = 1))
+	LEFT JOIN jobs_career_paths JobsCareerPaths ON Jobs.id = (JobsCareerPaths.job_id)
+	LEFT JOIN affiliates CareerPaths ON (CareerPaths.type = 3 AND CareerPaths.id = (JobsCareerPaths.affiliate_id) AND (CareerPaths.status = 1))
+	LEFT JOIN jobs_rec_qualifications JobsRecQualifications ON Jobs.id = (JobsRecQualifications.job_id)
+	LEFT JOIN affiliates RecQualifications ON (RecQualifications.type = 2 AND RecQualifications.id = (JobsRecQualifications.affiliate_id) AND (RecQualifications.status = 1))
+	LEFT JOIN jobs_req_qualifications JobsReqQualifications ON Jobs.id = (JobsReqQualifications.job_id)
+	LEFT JOIN affiliates ReqQualifications ON (ReqQualifications.type = 2 AND ReqQualifications.id = (JobsReqQualifications.affiliate_id) AND (ReqQualifications.status = 1))
+	INNER JOIN job_categories JobCategories ON (JobCategories.id = (Jobs.job_category_id) AND (JobCategories.status = 1))
+	INNER JOIN job_types JobTypes ON (JobTypes.id = (Jobs.job_type_id) AND (JobTypes.status = 1))
+	WHERE (
 	(
 		match(JobCategories.name) AGAINST ('キャビンアテンダント')
 		OR match(JobTypes.name) AGAINST ('キャビンアテンダント')
@@ -704,8 +704,8 @@ WHERE (
 	) 
 	AND Jobs.publish_status = 1
 	AND Jobs.status = 1)
-GROUP BY Jobs.id
-ORDER BY Jobs.sort_order desc, Jobs.id DESC 
-LIMIT 50 OFFSET 0
+	GROUP BY Jobs.id
+	ORDER BY Jobs.sort_order desc, Jobs.id DESC 
+	LIMIT 50 OFFSET 0
 
 -- END --
